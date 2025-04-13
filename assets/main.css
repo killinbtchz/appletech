@@ -1,0 +1,16 @@
+.not-exist{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+}
+
+.dark-mode .layout-container{
+    background-color: rgb(40, 46, 71);
+    color: white;
+}
+
+.dark-mode p{
+    color: white;
+}
