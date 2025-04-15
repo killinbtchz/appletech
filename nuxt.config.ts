@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  target: 'static', 
+  generate: {
+    fallback: true 
+  }, 
 $development:{
   devtools: { enabled: false },
 },
@@ -31,7 +35,7 @@ css: ['~/assets/main.css'],
   },
 
   routeRules: {
-    '/index': { prerender: true, swr: true },
+    '/': { prerender: true, swr: true },
     '/laptops/**': { swr: true },
     '/phones/**': { swr: true }
   }
