@@ -1,16 +1,19 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useNuxtApp, useState } from '#app'
+import { useState } from '#app'
 
 const { t } = useI18n()
-const NuxtApp = useNuxtApp();
 
-const loaded = useState('loaded', () => false)
+// Флаг, что страница загружена — сразу true, чтобы не ждать ответа от сервера
+const loaded = useState('loaded', () => true)
+// Флаг для показа модального окна — оно будет открыто после загрузки данных
 const showModal = useState('showModal', () => false)
+// Состояние для списка товаров
 const products = useState('products', () => [])
 
 onMounted(async () => {
+  // Асинхронный запрос в фоне
   try {
     const res = await fetch('https://dummyjson.com/products/search?q=Apple')
     const data = await res.json()
@@ -18,24 +21,19 @@ onMounted(async () => {
   } catch (error) {
     console.error('Ошибка при загрузке товаров Apple:', error)
   }
+  
+  // По окончании загрузки данных, показываем модальное окно (если нужно)
+  showModal.value = true
 })
 
-NuxtApp.hook("page:finish", async () => {
-  loaded.value = true;
-  showModal.value = true;
-});
-
+// Функция закрытия модального окна
 const closeModal = () => {
-  showModal.value = false;
-};
-
-NuxtApp.hook("app:error", (error) => {
-  console.error("Произошла ошибка:", error);
-});
-
+  showModal.value = false
+}
 </script>
 
 <template>
+  <!-- Разметка будет показываться сразу, т.к. loaded всегда true -->
   <div v-if="loaded" class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
     <div class="px-40 flex flex-1 justify-center py-5">
       <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
@@ -141,13 +139,5 @@ NuxtApp.hook("app:error", (error) => {
       </div>
     </div>
   </div>
-  <div v-else class="flex items-center justify-center min-h-screen bg-gradient-to-br from-white to-gray-100">
-  <div class="flex flex-col items-center space-y-6">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo" class="w-14 h-16"/>
-    <div class="flex flex-col items-center space-y-2">
-      <div class="w-8 h-8 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
-      <span class="text-gray-700 text-base font-medium">Загрузка...</span>
-    </div>
-  </div>
-</div>
+  <!-- Убираем спиннер, поскольку loaded всегда true -->
 </template>
